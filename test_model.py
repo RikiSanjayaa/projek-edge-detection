@@ -35,6 +35,42 @@ class CoinClassifierTester:
         self.model_dir = Path(model_dir)
         self.IMAGE_SIZE = (512, 512)
         self.class_names = ['Koin Rp 100', 'Koin Rp 1000', 'Koin Rp 200', 'Koin Rp 500']
+    
+    def resize_with_padding(self, image, target_size=(512, 512)):
+        """
+        Resize image dengan padding untuk mempertahankan aspect ratio
+        
+        Args:
+            image: Input image (BGR)
+            target_size: Target size (width, height)
+        
+        Returns:
+            Resized image with padding (no distortion)
+        """
+        h, w = image.shape[:2]
+        target_w, target_h = target_size
+        
+        # Hitung scale ratio
+        scale = min(target_w / w, target_h / h)
+        
+        # Ukuran baru setelah scale
+        new_w = int(w * scale)
+        new_h = int(h * scale)
+        
+        # Resize dengan aspect ratio preserved
+        resized = cv2.resize(image, (new_w, new_h), interpolation=cv2.INTER_AREA)
+        
+        # Buat canvas dengan padding (background hitam)
+        canvas = np.zeros((target_h, target_w, 3), dtype=np.uint8)
+        
+        # Hitung posisi untuk center image
+        x_offset = (target_w - new_w) // 2
+        y_offset = (target_h - new_h) // 2
+        
+        # Paste resized image ke canvas
+        canvas[y_offset:y_offset+new_h, x_offset:x_offset+new_w] = resized
+        
+        return canvas
         
     def load_model(self):
         """Load trained hybrid model"""
@@ -71,7 +107,8 @@ class CoinClassifierTester:
         if img is None:
             raise ValueError(f"Cannot read image: {image_path}")
         
-        img_resized = cv2.resize(img, self.IMAGE_SIZE)
+        # Resize dengan padding untuk menghindari distorsi
+        img_resized = self.resize_with_padding(img, self.IMAGE_SIZE)
         
         # Load model
         model, scaler, model_name = self.load_model()

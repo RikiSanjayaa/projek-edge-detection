@@ -7,6 +7,44 @@ import numpy as np
 import cv2
 
 
+def resize_with_padding(image, target_size=(512, 512)):
+    """
+    Resize image dengan padding untuk mempertahankan aspect ratio.
+    Menghindari distorsi pada gambar yang tidak kotak.
+    
+    Args:
+        image: Input image (BGR)
+        target_size: Target size (width, height)
+    
+    Returns:
+        Resized image with padding (no distortion)
+    """
+    h, w = image.shape[:2]
+    target_w, target_h = target_size
+    
+    # Hitung scale ratio
+    scale = min(target_w / w, target_h / h)
+    
+    # Ukuran baru setelah scale
+    new_w = int(w * scale)
+    new_h = int(h * scale)
+    
+    # Resize dengan aspect ratio preserved
+    resized = cv2.resize(image, (new_w, new_h), interpolation=cv2.INTER_AREA)
+    
+    # Buat canvas dengan padding (background hitam)
+    canvas = np.zeros((target_h, target_w, 3), dtype=np.uint8)
+    
+    # Hitung posisi untuk center image
+    x_offset = (target_w - new_w) // 2
+    y_offset = (target_h - new_h) // 2
+    
+    # Paste resized image ke canvas
+    canvas[y_offset:y_offset+new_h, x_offset:x_offset+new_w] = resized
+    
+    return canvas
+
+
 def apply_canny_edge(image):
     """Apply Canny edge detection"""
     if len(image.shape) == 3:
