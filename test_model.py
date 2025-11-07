@@ -31,7 +31,7 @@ from preprocessing import (
 class CoinClassifierTester:
     """Coin classifier tester with hybrid feature extraction"""
     
-    def __init__(self, model_dir='/models'):
+    def __init__(self, model_dir='models'):
         self.model_dir = Path(model_dir)
         self.IMAGE_SIZE = (512, 512)
         self.class_names = ['Koin Rp 100', 'Koin Rp 1000', 'Koin Rp 200', 'Koin Rp 500']
@@ -245,8 +245,8 @@ Examples:
     )
     
     parser.add_argument('image', type=str, help='Path to coin image')
-    parser.add_argument('--model-dir', type=str, default='../models',
-                        help='Model directory (default: ../models)')
+    parser.add_argument('--model-dir', type=str, default='models',
+                        help='Model directory (default: models)')
     parser.add_argument('--save-steps', action='store_true',
                         help='Save preprocessing steps visualization')
     parser.add_argument('--output', '-o', type=str, default=None,
