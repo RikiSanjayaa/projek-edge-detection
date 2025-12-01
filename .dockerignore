@@ -1,0 +1,75 @@
+# Virtual environments
+venv/
+venv-convert/
+.venv/
+ENV/
+
+# Git
+.git/
+.gitignore
+
+# Notebooks & datasets (not needed for API)
+notebooks/
+dataset/
+dataset_splitted/
+*.ipynb
+dataset_splitted.zip
+
+# Results (training outputs)
+results/
+
+# Node modules (frontend is pre-built)
+web/node_modules/
+web/src/
+web/*.json
+web/*.js
+web/*.html
+web/public/
+
+# Keep only web/dist for nginx
+!web/dist/
+
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+.pytest_cache/
+*.egg-info/
+
+# IDE
+.vscode/
+.idea/
+
+# Logs
+*.log
+
+# Temp files
+*.tmp
+*.temp
+
+# Environment files (will use Docker env vars)
+.env
+*.env.local
+
+# Test files
+test_*.py
+
+# Conversion artifacts
+convert_model.py
+*.tflite
+models/coin_saved_model/
+
+# Unused models (only keep main CNN and RF models)
+models/random_forest_cropped_only_model.pkl
+models/random_forest_cropped_only_scaler.pkl
+models/random_forest_hybrid_model.pkl
+models/random_forest_hybrid_scaler.pkl
+models/coin_classifier_cnn_8class_classes.pkl
+models/coin_classifier_cnn_8class_config.pkl
+models/coin_classifier_8class_classes.pkl
+models/*.tflite
+
+# README files
+README.md
+api/README.md
+web/README.md

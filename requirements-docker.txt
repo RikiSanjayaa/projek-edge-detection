@@ -1,0 +1,17 @@
+# Docker-specific requirements (API only)
+# Minimal dependencies for inference
+
+# Image Processing (headless - no GUI dependencies)
+opencv-python-headless
+numpy
+Pillow
+
+# Machine Learning
+tensorflow
+scikit-learn
+
+# API
+fastapi
+uvicorn[standard]
+python-multipart
+python-dotenv
