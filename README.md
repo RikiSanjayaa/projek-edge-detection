@@ -88,18 +88,33 @@ projek-edge-detection/
 ├── preprocessing.py              # Fungsi preprocessing (CLAHE, edge detection, crop)
 ├── test_model.py                 # CLI untuk testing model
 ├── requirements.txt
-├── dataset/                      # download dari kaggle (https://www.kaggle.com/datasets/ameeeliaas/klasifikasi-koin)
-├── dataset_splitted/             # Dataset 8 kelas (download terpisah)
-├── notebooks/
-│   ├── coin-classification-cnn.ipynb    # Utama: CNN 8 kelas
-│   ├── coin-classification-splitted.ipynb    # ML Klasik Utama: (RF, SVM) 8 kelas
-│   ├── coin-classification.ipynb        # ML klasik (RF, SVM) 4 kelas
-│   └── COIN-README.md
-├── models/
-│   └── coin_classifier_cnn_8class.keras
-└── results/
-    └── coin_classification_cnn/
+│
+├── api/                          # FastAPI Backend
+│   ├── main.py                   # API endpoints
+│   ├── predictor.py              # Model loading & prediction
+│   ├── .env.example              # Environment template
+│   └── README.md                 # API documentation
+│
+├── web/                          # React Frontend
+│   ├── src/
+│   │   ├── App.jsx
+│   │   └── components/
+│   ├── .env.example              # Environment template
+│   └── README.md                 # Web documentation
+│
+├── models/                       # Trained Models (not in git)
+│   ├── coin_classifier_cnn_8class.keras
+│   └── coin_classifier_8class_model.pkl
+│
+├── notebooks/                    # Jupyter Notebooks
+│   ├── coin-classification-cnn.ipynb    # CNN training
+│   └── coin-classification-splitted.ipynb
+│
+├── dataset_splitted/             # Dataset (download separately)
+└── results/                      # Training results
 ```
+
+---
 
 ## Pipeline Preprocessing
 
@@ -125,8 +140,28 @@ Prediction (8 kelas)
 
 ## Teknologi
 
-- Python 3.10+
+**Machine Learning:**
+
 - TensorFlow/Keras (CNN)
-- OpenCV (Edge Detection, Hough Circle)
 - scikit-learn (Random Forest, SVM)
-- NumPy, Pandas, Matplotlib
+- OpenCV (Edge Detection, Hough Circle)
+
+**Backend:**
+
+- FastAPI
+- Python 3.10+
+
+**Frontend:**
+
+- React 18
+- Vite
+- Tailwind CSS
+- Lucide React
+
+---
+
+## Documentation
+
+- [API Documentation](api/README.md)
+- [Web Documentation](web/README.md)
+- [Notebook Guide](notebooks/COIN-README.md)
