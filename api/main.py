@@ -1,12 +1,17 @@
 """
 FastAPI Backend for Coin Classification
 """
+import os
+from dotenv import load_dotenv
 from fastapi import FastAPI, UploadFile, File, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 import uvicorn
 
 from .predictor import predict, load_models
+
+# Load environment variables
+load_dotenv()
 
 app = FastAPI(
     title="Coin Classification API",
@@ -15,9 +20,12 @@ app = FastAPI(
 )
 
 # CORS - allow React frontend
+cors_origins = os.getenv("CORS_ORIGINS", "http://localhost:5173,http://localhost:3000")
+allowed_origins = [origin.strip() for origin in cors_origins.split(",")]
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:5173", "http://localhost:3000"],  # Vite & CRA default ports
+    allow_origins=allowed_origins,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],

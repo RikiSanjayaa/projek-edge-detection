@@ -4,7 +4,7 @@ import CameraCapture from './components/CameraCapture'
 import PreprocessingSteps from './components/PreprocessingSteps'
 import PredictionResult from './components/PredictionResult'
 
-const API_URL = 'http://localhost:8000'
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000'
 
 function App() {
   const [result, setResult] = useState(null) // API response
