@@ -39,6 +39,7 @@ results/
 
 # Dataset (download separately from Kaggle)
 dataset/
+dataset_splitted/
 *.zip
 archive.zip
 dataset.zip

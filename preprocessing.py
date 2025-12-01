@@ -7,6 +7,37 @@ import numpy as np
 import cv2
 
 
+def apply_clahe(image, clip_limit=2.0, tile_grid_size=(8, 8)):
+    """
+    Apply CLAHE (Contrast Limited Adaptive Histogram Equalization)
+    to normalize lighting variations across images.
+    
+    Args:
+        image: Input image (BGR or grayscale)
+        clip_limit: Threshold for contrast limiting (default 2.0)
+        tile_grid_size: Size of grid for histogram equalization (default 8x8)
+    
+    Returns:
+        Image with normalized contrast
+    """
+    if len(image.shape) == 3:
+        # For color images, convert to LAB and apply CLAHE on L channel
+        lab = cv2.cvtColor(image, cv2.COLOR_BGR2LAB)
+        l, a, b = cv2.split(lab)
+        
+        clahe = cv2.createCLAHE(clipLimit=clip_limit, tileGridSize=tile_grid_size)
+        l_clahe = clahe.apply(l)
+        
+        lab_clahe = cv2.merge([l_clahe, a, b])
+        result = cv2.cvtColor(lab_clahe, cv2.COLOR_LAB2BGR)
+    else:
+        # For grayscale images, apply CLAHE directly
+        clahe = cv2.createCLAHE(clipLimit=clip_limit, tileGridSize=tile_grid_size)
+        result = clahe.apply(image)
+    
+    return result
+
+
 def resize_with_padding(image, target_size=(512, 512)):
     """
     Resize image dengan padding untuk mempertahankan aspect ratio.
@@ -45,24 +76,48 @@ def resize_with_padding(image, target_size=(512, 512)):
     return canvas
 
 
-def apply_canny_edge(image):
-    """Apply Canny edge detection"""
+def apply_canny_edge(image, use_clahe=True):
+    """Apply Canny edge detection
+    
+    Args:
+        image: Input image (BGR or grayscale)
+        use_clahe: Whether to apply CLAHE before edge detection (default True)
+    
+    Returns:
+        Edge detection result
+    """
     if len(image.shape) == 3:
         gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
     else:
         gray = image
+    
+    # Apply CLAHE to normalize lighting before edge detection
+    if use_clahe:
+        gray = apply_clahe(gray)
     
     blurred = cv2.GaussianBlur(gray, (5, 5), 0)
     edges = cv2.Canny(blurred, 50, 150)
     return edges
 
 
-def apply_sobel_edge(image):
-    """Apply Sobel edge detection"""
+def apply_sobel_edge(image, use_clahe=True):
+    """Apply Sobel edge detection
+    
+    Args:
+        image: Input image (BGR or grayscale)
+        use_clahe: Whether to apply CLAHE before edge detection (default True)
+    
+    Returns:
+        Edge detection result
+    """
     if len(image.shape) == 3:
         gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
     else:
         gray = image
+    
+    # Apply CLAHE to normalize lighting before edge detection
+    if use_clahe:
+        gray = apply_clahe(gray)
     
     sobel_x = cv2.Sobel(gray, cv2.CV_64F, 1, 0, ksize=3)
     sobel_y = cv2.Sobel(gray, cv2.CV_64F, 0, 1, ksize=3)
@@ -73,24 +128,25 @@ def apply_sobel_edge(image):
     return sobel_combined
 
 
-def detect_and_segment_coin(image, edge_method='sobel'):
+def detect_and_segment_coin(image, edge_method='sobel', use_clahe=True):
     """
     Detect coin using Hough Circle Transform and segment it
     
     Args:
         image: Input image
         edge_method: 'canny' or 'sobel'
+        use_clahe: Whether to apply CLAHE before edge detection (default True)
     
     Returns:
         segmented: Masked image focusing on coin region
         circle_info: (x, y, radius) of detected circle, or None
         edges: Edge detection result
     """
-    # Edge detection
+    # Edge detection (with optional CLAHE)
     if edge_method == 'canny':
-        edges = apply_canny_edge(image)
+        edges = apply_canny_edge(image, use_clahe=use_clahe)
     else:
-        edges = apply_sobel_edge(image)
+        edges = apply_sobel_edge(image, use_clahe=use_clahe)
     
     # Convert to grayscale for Hough Transform
     if len(image.shape) == 3:
