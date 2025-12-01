@@ -17,3 +17,8 @@ tensorflow
 tqdm
 jupyter
 notebook
+
+# API (FastAPI)
+fastapi
+uvicorn[standard]
+python-multipart
