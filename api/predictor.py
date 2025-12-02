@@ -227,8 +227,16 @@ def preprocess_image(image_bytes, image_size=(256, 256)):
     else:
         cropped = resized.copy()
     
+    # Ensure cropped image is exactly the target size (prevents CNN dimension errors)
+    if cropped.shape[:2] != (image_size[1], image_size[0]):
+        cropped = cv2.resize(cropped, image_size, interpolation=cv2.INTER_AREA)
+    
     # Step 6: Final edge detection on cropped
     final_edge = apply_sobel_edge(cropped)
+    
+    # Ensure final edge is exactly the target size
+    if final_edge.shape[:2] != (image_size[1], image_size[0]):
+        final_edge = cv2.resize(final_edge, image_size, interpolation=cv2.INTER_AREA)
     
     # Collect all steps as base64
     steps = {

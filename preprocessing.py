@@ -209,6 +209,10 @@ def crop_coin_to_circle(image, circle_info, target_size=(512, 512)):
     
     x, y, radius = circle_info
     
+    # Validate circle parameters
+    if radius <= 0 or x < 0 or y < 0:
+        return cv2.resize(image, target_size)
+    
     # Define bounding box around circle
     # Add small margin (5%) to ensure we capture full circle
     margin = int(radius * 0.05)
@@ -217,16 +221,17 @@ def crop_coin_to_circle(image, circle_info, target_size=(512, 512)):
     x2 = min(image.shape[1], x + radius + margin)
     y2 = min(image.shape[0], y + radius + margin)
     
-    # Ensure valid crop region (non-empty)
-    if x2 <= x1 or y2 <= y1:
+    # Ensure valid crop region (non-empty and has minimum size)
+    min_crop_size = 10  # Minimum crop size to avoid too small images
+    if x2 <= x1 or y2 <= y1 or (x2 - x1) < min_crop_size or (y2 - y1) < min_crop_size:
         # Invalid crop region, return resized original
         return cv2.resize(image, target_size)
     
     # Crop to bounding box
     cropped = image[y1:y2, x1:x2]
     
-    # Check if cropped is empty
-    if cropped.size == 0:
+    # Check if cropped is empty or too small
+    if cropped.size == 0 or cropped.shape[0] < min_crop_size or cropped.shape[1] < min_crop_size:
         return cv2.resize(image, target_size)
     
     # Resize to target size
