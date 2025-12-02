@@ -146,6 +146,41 @@ def image_to_base64(image, format="PNG"):
     return base64.b64encode(buffer.getvalue()).decode('utf-8')
 
 
+def resize_with_aspect_ratio(image, target_size=(256, 256)):
+    """
+    Resize image while maintaining aspect ratio by zooming to fit and center-cropping.
+    This prevents circular coins from becoming oval when the input image is not square.
+    
+    Args:
+        image: Input image (BGR or grayscale)
+        target_size: Target (width, height) tuple
+    
+    Returns:
+        Resized and center-cropped image with maintained aspect ratio
+    """
+    target_w, target_h = target_size
+    h, w = image.shape[:2]
+    
+    # Calculate scale to fill target (zoom to fit, crop excess)
+    scale = max(target_w / w, target_h / h)
+    
+    # New dimensions after scaling
+    new_w = int(w * scale)
+    new_h = int(h * scale)
+    
+    # Resize with aspect ratio maintained
+    resized = cv2.resize(image, (new_w, new_h), interpolation=cv2.INTER_AREA)
+    
+    # Calculate crop offsets to center-crop to target size
+    x_offset = (new_w - target_w) // 2
+    y_offset = (new_h - target_h) // 2
+    
+    # Center-crop to target size
+    cropped = resized[y_offset:y_offset + target_h, x_offset:x_offset + target_w]
+    
+    return cropped
+
+
 def preprocess_image(image_bytes, image_size=(256, 256)):
     """
     Run full preprocessing pipeline and return step images
@@ -162,8 +197,8 @@ def preprocess_image(image_bytes, image_size=(256, 256)):
     if original is None:
         raise ValueError("Could not decode image")
     
-    # Step 1: Resize
-    resized = cv2.resize(original, image_size)
+    # Step 1: Resize with aspect ratio preservation (prevents circular coins from becoming oval)
+    resized = resize_with_aspect_ratio(original, image_size)
     
     # Step 2: CLAHE
     clahe_img = apply_clahe(resized)

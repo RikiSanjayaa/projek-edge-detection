@@ -162,6 +162,7 @@ Prediction (8 kelas)
 
 ## Documentation
 
+- [Docker Deployment](DOCKER.md) - Deploy dengan Docker
 - [API Documentation](api/README.md)
 - [Web Documentation](web/README.md)
 - [Notebook Guide](notebooks/COIN-README.md)
