@@ -4,11 +4,20 @@ Klasifikasi koin Indonesia (Rp 100, 200, 500, 1000) berdasarkan **nominal dan si
 
 ## Performa Model
 
-| Model                 | Kelas   | Akurasi  |
-| --------------------- | ------- | -------- |
-| **CNN + Sobel Edge**  | 8 kelas | **~95%** |
-| Random Forest + Sobel | 8 kelas | ~85%     |
-| SVM + Sobel           | 8 kelas | ~80%     |
+| Model                               | Edge Detection | Akurasi    |
+| ----------------------------------- | -------------- | ---------- |
+| **Transfer Learning (ResNet18)**    | Tidak ada      | **98.15%** |
+| **Transfer Learning (MobileNetV2)** | Tidak ada      | 83.73%     |
+| **CNN Custom + Canny**              | Canny          | **96.86%** |
+| CNN Custom + Sobel                  | Sobel          | 95.74%     |
+| Random Forest + Sobel               | Sobel          | 81.02%     |
+| Random Forest + Canny               | Canny          | 78.21%     |
+
+### Temuan Penting
+
+> **Preprocessing dengan edge detection (Canny) berhasil mencapai 96.86% - hanya selisih ~1.3% dari Transfer Learning (ResNet18) yang pre-trained pada 14 juta gambar ImageNet.**
+
+Ini menunjukkan bahwa untuk domain spesifik seperti klasifikasi koin, **pemilihan preprocessing yang tepat** dapat mengkompensasi ketiadaan pre-trained knowledge.
 
 ## Dataset
 
@@ -107,8 +116,10 @@ projek-edge-detection/
 │   └── coin_classifier_8class_model.pkl
 │
 ├── notebooks/                    # Jupyter Notebooks
-│   ├── coin-classification-cnn.ipynb    # CNN training
-│   └── coin-classification-splitted.ipynb
+│   ├── coin-classification-cnn-canny.ipynb  # CNN + Canny (96.86%)
+│   ├── coin-classification-cnn.ipynb        # CNN + Sobel (95.74%)
+│   ├── coin-classification-transfer-learning.ipynb  # Transfer Learning (98%)
+│   └── coin-classification-splitted.ipynb   # Random Forest & SVM
 │
 ├── dataset_splitted/             # Dataset (download separately)
 └── results/                      # Training results
@@ -142,9 +153,10 @@ Prediction (8 kelas)
 
 **Machine Learning:**
 
-- TensorFlow/Keras (CNN)
+- TensorFlow/Keras (CNN Custom)
+- PyTorch + torchvision (Transfer Learning: ResNet18, MobileNetV2)
 - scikit-learn (Random Forest, SVM)
-- OpenCV (Edge Detection, Hough Circle)
+- OpenCV (Edge Detection: Canny & Sobel, Hough Circle Transform)
 
 **Backend:**
 

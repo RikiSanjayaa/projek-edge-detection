@@ -1,13 +1,16 @@
-# Klasifikasi Koin Rupiah: Edge Detection + CNN
+# Klasifikasi Koin Rupiah: Edge Detection + CNN + Transfer Learning
 
 ## Overview
 
-Proyek klasifikasi koin rupiah menggunakan:
+Proyek klasifikasi koin rupiah menggunakan berbagai metode:
 
-- **Edge Detection**: Sobel (dengan CLAHE normalization)
+- **Edge Detection**: Canny & Sobel (dengan CLAHE normalization)
 - **Segmentasi**: Hough Circle Transform → Crop ke diameter
 - **Dataset Split**: 8 kelas (4 nominal × 2 sisi: angka/gambar)
-- **Model**: CNN, Random Forest, SVM
+- **Model**:
+  - Transfer Learning (ResNet18, MobileNetV2) - **98.15%**
+  - CNN Custom + Edge Detection - **96.86%**
+  - Random Forest, SVM - ~81%
 
 ## Dataset
 
@@ -96,13 +99,28 @@ Prediction (8 kelas)
 
 ## Hasil
 
-| Model         | Edge Method   | Akurasi  |
-| ------------- | ------------- | -------- |
-| **CNN**       | Sobel + CLAHE | **~95%** |
-| Random Forest | Sobel         | ~85%     |
-| SVM           | Sobel         | ~80%     |
+| Model                               | Edge Detection | Akurasi    |
+| ----------------------------------- | -------------- | ---------- |
+| **Transfer Learning (ResNet18)**    | Tidak ada      | **98.15%** |
+| **Transfer Learning (MobileNetV2)** | Tidak ada      | 83.73      |
+| **CNN Custom + Canny**              | Canny          | **96.86%** |
+| CNN Custom + Sobel                  | Sobel          | 95.74%     |
+| Random Forest + Sobel               | Sobel          | 81.02%     |
+| Random Forest + Canny               | Canny          | 78.21%     |
 
-### Kenapa CNN Lebih Bagus?
+### Temuan: Edge Detection vs Transfer Learning
+
+| Aspek         | CNN + Edge Detection         | Transfer Learning  |
+| ------------- | ---------------------------- | ------------------ |
+| Akurasi       | 96.86% (Canny)               | 98.15% (ResNet18)  |
+| Preprocessing | CLAHE → Canny → Hough Circle | Resize + Normalize |
+| Input         | Grayscale edge (256×256×1)   | RGB (224×224×3)    |
+| Parameter     | ~500K-1M                     | ~11.7M             |
+| Training      | From scratch                 | Fine-tuning        |
+
+> **Insight**: Edge detection berhasil mengekstrak fitur diskriminatif koin sehingga CNN sederhana dapat **hampir menyamai** model pre-trained pada 14 juta gambar.
+
+### Kenapa CNN Lebih Bagus dari ML Tradisional?
 
 1. **Feature Learning**: CNN belajar fitur sendiri, tidak perlu manual extraction
 2. **Spatial Hierarchy**: Menangkap pattern dari simple ke complex
@@ -119,14 +137,21 @@ Prediction (8 kelas)
 
 ### Notebooks
 
-- `coin-classification-cnn.ipynb` - CNN 8 kelas (MAIN)
-- `coin-classification.ipynb` - RF & SVM 4 kelas
-- `coin-classification-splitted.ipynb` - RF & SVM 8 kelas
+| Notebook                                      | Metode                                    | Akurasi    |
+| --------------------------------------------- | ----------------------------------------- | ---------- |
+| `coin-classification-transfer-learning.ipynb` | Transfer Learning (ResNet18, MobileNetV2) | **98.15%** |
+| `coin-classification-cnn-canny.ipynb`         | CNN + Canny Edge                          | **96.86%** |
+| `coin-classification-cnn.ipynb`               | CNN + Sobel Edge                          | 95.74%     |
+| `coin-classification-splitted.ipynb`          | RF & SVM 8 kelas                          | ~81%       |
+| `coin-classification.ipynb`                   | RF & SVM 4 kelas                          | (legacy)   |
 
 ### Model Output
 
-- `models/coin_classifier_cnn_8class.keras`
-- `results/coin_classification_cnn/`
+- `models/coin_classifier_resnet18.pth` - Transfer Learning ResNet18
+- `models/coin_classifier_mobilenetv2.pth` - Transfer Learning MobileNetV2
+- `models/coin_classifier_cnn_8class.keras` - CNN Custom
+- `results/coin_classification_transfer_learning/` - Hasil Transfer Learning
+- `results/coin_classification_cnn/` - Hasil CNN
 
 ## Quick Start
 

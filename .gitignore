@@ -32,6 +32,7 @@ wheels/
 *.keras
 *.pkl
 *.joblib
+*.pth
 
 # Results (generated files)
 results/
