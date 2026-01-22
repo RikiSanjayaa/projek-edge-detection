@@ -170,19 +170,19 @@ function CameraCapture({ onCapture, loading }) {
       {mode === 'camera' && (
         <div className="relative max-w-lg mx-auto">
           {/* Video Feed */}
-          <div className="relative rounded-xl overflow-hidden bg-black aspect-4/3">
+          <div className="relative rounded-xl overflow-hidden bg-black">
             <video
               ref={videoRef}
               autoPlay
               playsInline
               muted
-              className="w-full h-full object-cover"
+              className="w-full h-auto"
             />
 
             {/* Circle Overlay Guide */}
             {cameraActive && (
               <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-                <div className="w-64 h-64 border-4 border-green-400 rounded-full opacity-70">
+                <div className="w-48 h-48 sm:w-64 sm:h-64 border-4 border-green-400 rounded-full opacity-70">
                   <div className="absolute inset-0 flex items-center justify-center">
                     <span className="bg-black/50 px-3 py-1 rounded text-sm text-green-400">
                       Posisikan koin di sini

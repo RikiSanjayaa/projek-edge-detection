@@ -106,6 +106,22 @@ def apply_sobel_edge(image):
     return sobel_combined
 
 
+def apply_canny_edge(image):
+    """Apply Canny edge detection - better accuracy for circle detection"""
+    if len(image.shape) == 3:
+        gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+    else:
+        gray = image
+    
+    # Apply CLAHE first
+    gray = apply_clahe(gray)
+    
+    # Apply Gaussian blur and Canny
+    blurred = cv2.GaussianBlur(gray, (5, 5), 0)
+    edges = cv2.Canny(blurred, 50, 150)
+    return edges
+
+
 def detect_circle(image):
     """Detect coin circle using Hough Transform"""
     if len(image.shape) == 3:
@@ -203,8 +219,8 @@ def preprocess_image(image_bytes, image_size=(256, 256)):
     # Step 2: CLAHE
     clahe_img = apply_clahe(resized)
     
-    # Step 3: Sobel Edge (on resized, before crop)
-    sobel_img = apply_sobel_edge(resized)
+    # Step 3: Canny Edge (on resized, before crop)
+    canny_img = apply_canny_edge(resized)
     
     # Step 4: Hough Circle Detection
     circle = detect_circle(resized)
@@ -232,7 +248,7 @@ def preprocess_image(image_bytes, image_size=(256, 256)):
         cropped = cv2.resize(cropped, image_size, interpolation=cv2.INTER_AREA)
     
     # Step 6: Final edge detection on cropped
-    final_edge = apply_sobel_edge(cropped)
+    final_edge = apply_canny_edge(cropped)
     
     # Ensure final edge is exactly the target size
     if final_edge.shape[:2] != (image_size[1], image_size[0]):
@@ -243,7 +259,7 @@ def preprocess_image(image_bytes, image_size=(256, 256)):
         "original": image_to_base64(original),
         "resized": image_to_base64(resized),
         "clahe": image_to_base64(clahe_img),
-        "sobel": image_to_base64(sobel_img),
+        "canny": image_to_base64(canny_img),
         "hough_circle": image_to_base64(hough_img),
         "cropped": image_to_base64(cropped),
         "edge_final": image_to_base64(final_edge),

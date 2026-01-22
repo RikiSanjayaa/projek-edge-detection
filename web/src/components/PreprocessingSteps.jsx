@@ -22,7 +22,7 @@ function PreprocessingSteps({ steps }) {
     { key: 'original', label: 'Original', Icon: Image },
     { key: 'resized', label: 'Resized', Icon: Maximize2 },
     { key: 'clahe', label: 'CLAHE', Icon: Sun },
-    { key: 'sobel', label: 'Sobel Edge', Icon: Grid3X3 },
+    { key: 'canny', label: 'Canny Edge', Icon: Grid3X3 },
     { key: 'hough_circle', label: 'Hough Circle', Icon: Circle },
     { key: 'cropped', label: 'Cropped', Icon: Crop },
     { key: 'edge_final', label: 'Final Edge', Icon: CheckCircle2 },
@@ -126,7 +126,7 @@ function PreprocessingSteps({ steps }) {
         <ArrowRight className="w-3 h-3" />
         <span>CLAHE</span>
         <ArrowRight className="w-3 h-3" />
-        <span>Sobel</span>
+        <span>Canny</span>
         <ArrowRight className="w-3 h-3" />
         <span>Hough</span>
         <ArrowRight className="w-3 h-3" />
